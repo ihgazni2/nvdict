@@ -61,7 +61,8 @@ class Orb:
         else:
             return(None)
     def _children_dict(self):
-        return(dfunc.get_vchildren(self._root))
+        selfd = dfunc.get_via_pl(self._root,self._pl)
+        return(dfunc.get_vchildren(selfd))
     def _is_root(self):
         return(len(self._pl)==0)
 
