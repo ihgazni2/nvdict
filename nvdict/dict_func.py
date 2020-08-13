@@ -57,6 +57,14 @@ def is_leaf_pl_via_dict(d,pl):
 
 ###
 
+def get_via_loc(d,x,y):
+    m = _get_mat(d)
+    return(m[x][y]['d'])
+
+
+
+###
+
 def get_type_str(o):
     typ = type(o)
     s = str(typ)
@@ -143,13 +151,23 @@ def is_leaf_pl_via_plsdfs(sdfs_pl,pl):
 
 
 
-def get_pl_children_via_plsdfs(plsdfs,pl):
-    kstruct = plsdfs_to_kstruct(sdfs_pl)    
+def is_child_pl_of(pl,ppl):
+    cond0 = ( len(ppl) + 1 ) == len(pl)
+    if(cond0):
+        cond1 = (ppl == pl[0:-1])
+        if(cond1):
+            return(True)
+        else:
+            return(False)
+    else:
+        return(False)
 
 
+def get_pl_children_via_plsdfs(sdfs_pl,pl):
+    children = fltrv(sdfs_pl,lambda chpl:is_child_pl_of(chpl,pl))    
+    return(children)
 
-####
-
+#############
 
 
 
@@ -222,14 +240,14 @@ def get_wfs_vlist(d):
 def get_sdfs_vlist(d):
     m = _get_mat(d)
     sdfs = _get_ele_sdfs(m[0][0])
-    sdfs = mapv(sdfs,lambda e:e['d'])
+    sdfs = list(map(lambda e:e['d'],sdfs))
     return(sdfs)
 
 def get_sdfs_leaf_vlist(d):
     m = _get_mat(d)
     sdfs = _get_ele_sdfs(m[0][0])
     sdfs = fltrv(sdfs,lambda e:_is_leaf_ele(e))
-    sdfs = mapv(sdfs,lambda e:e['d'])
+    sdfs = list(map(lambda e:e['d'],sdfs))
     return(sdfs)
     
 
@@ -273,7 +291,7 @@ def flatten_to_leaf_entries(d):
     m = _get_mat(d)
     sdfs = _get_ele_sdfs(m[0][0])
     sdfs = fltrv(sdfs,lambda e:_is_leaf_ele(e))
-    entries = mapv(sdfs,lambda e:[tuple(e['pl']),e['d']])
+    entries = list(map(lambda e:[tuple(e['pl']),e['d']],sdfs))
     return(entries)
 
 def flatten_to_leaf_dict(d):
@@ -285,7 +303,7 @@ def flatten_to_leaf_dict(d):
 def flatten_to_entries(d):
     m = _get_mat(d)
     sdfs = _get_ele_sdfs(m[0][0])
-    entries = mapv(sdfs,lambda e:[tuple(e['pl']),e['d']])
+    entries = list(map(lambda e:[tuple(e['pl']),e['d']],sdfs))
     return(entries)
 
 def flatten_to_dict(d):
@@ -387,6 +405,9 @@ def _get_wfs_elist(d):
 def _get_eparent(ele):
     return(ele["parent"]) 
 
+
+
+
 def _get_efstch(ele):
     children = ele["children"]
     efstch = None if(len(children)==0) else children[0]
@@ -435,6 +456,11 @@ def _get_ele_sdfs(ele):
         sdfs.append(ele)
         ele = _get_ele_sdfs_next(ele)
     return(sdfs)
+
+
+#spl  sibseq-pathlist
+#bpl  breadth-pathlist
+
 
 
 #############
